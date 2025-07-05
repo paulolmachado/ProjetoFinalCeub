@@ -22,10 +22,17 @@ def carregar_modelo():
     return modelo
 
 def prever(modelo, dados_entrada):
+    try:
+        # Verificação de segurança: garantir que é um DataFrame 2D
+        if not isinstance(dados_entrada, pd.DataFrame):
+            raise TypeError("Esperado pandas.DataFrame como entrada.")
+        if dados_entrada.ndim != 2:
+            raise ValueError(f"Entrada deve ter 2 dimensões. Recebido shape={dados_entrada.shape}")
 
-    df_entrada = pd.DataFrame([dados_entrada])
+        # Predição
+        predicao = modelo.predict(dados_entrada)
+
+        return predicao[0]  # retorna apenas o valor previsto
     
-    # O modelo já sabe como lidar com as features categóricas pois foi treinado assim
-    predicao = modelo.predict(df_entrada)
-    
-    return predicao[0]
+    except Exception as e:
+        return {"erro": str(e)}
